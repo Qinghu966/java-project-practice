@@ -4,5 +4,9 @@ import java.math.BigDecimal;
 
 public class Account {
 
-    private double balance;
+    protected Double balance;
+
+    public Account(double initialBalance){
+        this.balance = initialBalance;
+    }
 }
