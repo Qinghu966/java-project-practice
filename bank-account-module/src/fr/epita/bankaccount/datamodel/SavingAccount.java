@@ -17,4 +17,11 @@ public class SavingAccount extends Account{
         this.balance = amount;
     }
 
+    @Override
+    public String toString() {
+        return "SavingAccount{" +
+                super.toString() +
+                ", interestRate=" + interestRate +
+                '}';
+    }
 }

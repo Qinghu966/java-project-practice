@@ -9,4 +9,11 @@ public class Account {
     public Account(double initialBalance){
         this.balance = initialBalance;
     }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "balance=" + balance +
+                '}';
+    }
 }

@@ -35,5 +35,19 @@ public class Launcher {
 
         InvestmentAccount investmentAccount = new InvestmentAccount(456);
 
+        System.out.println("Please enter the initial balance from savings:");
+        String initialBalance = scanner.nextLine();
+        SavingAccount savingAccountFromConsole = new SavingAccount(Double.parseDouble(initialBalance));
+
+        System.out.println("Please enter the initial balance from investment:");
+        initialBalance = scanner.nextLine();
+        InvestmentAccount investmentAccountFromConsole = new InvestmentAccount(Double.parseDouble(initialBalance));
+
+        System.out.println(savingAccountFromConsole);
+        System.out.println(investmentAccountFromConsole);
+
+        scanner.close();
+
     }
+
 }
