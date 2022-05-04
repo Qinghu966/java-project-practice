@@ -1,6 +1,7 @@
 package fr.epita.titanic.launchers;
 
 import fr.epita.titanic.datamodel.Passenger;
+import fr.epita.titanic.service.PassengersDataService;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,75 +11,32 @@ public class Launcher {
 
     public static void main(String[] args) throws FileNotFoundException {
         File file = new File("./titanic/titanic.csv");
-        if (file.exists()) {
-            System.out.println("the file has been found!");
-        }
-        Scanner scanner = new Scanner(file);
-        List<Passenger> passengers = new ArrayList<>();
-        List<Passenger> invalidPassengers = new ArrayList<>();
-        double averageAge = 0;
-        //we want to skip the headers row.
-        scanner.nextLine();
-        while (scanner.hasNext()) {
-            String line = scanner.nextLine();
-            String[] split = line.split(",");
+        List<Passenger> passengers = PassengersDataService.readPassengerFromFile(file);
 
-            String passengerId = split[0];
-            Boolean survived = split[1].equals("1");
-            String pclass = split[2];
-            String gender = split[3];
-
-            String rawAge = split[4];
-            double age = 0;
-            boolean invalidAge = rawAge == null || rawAge.isEmpty();
-            if (!invalidAge) {
-                age = Double.parseDouble(rawAge);
-            }
-
-            Passenger passenger = new Passenger(passengerId, survived, pclass, gender, age);
-            if (invalidAge) {
-                invalidPassengers.add(passenger);
-            } else {
-                passengers.add(passenger);
-                averageAge += passenger.getAge();
-            }
-        }
-        averageAge = averageAge / passengers.size();
-        int survivedCount = 0;
-        for (Passenger p : passengers) {
-            if (p.getSurvived()) {
-                survivedCount++;
-            }
-        }
-        long survivedPassengersCount = passengers.stream()
-                .filter(passenger -> passenger.getSurvived())
-                .count();
+        int survivedCount = PassengersDataService.getSurvivedCount(passengers);
 
         System.out.println("survived " + survivedCount + " out of " + passengers.size());
-        double average = passengers
-                .stream()
-                .mapToDouble(Passenger::getAge)
-                .average()
-                .getAsDouble();
+
+        double average = PassengersDataService.getAverageAge(passengers);
 
         System.out.println("average: " + average);
 
-        Map<String, Integer> passengerCountBySurvival = new HashMap<>();
-        for (Passenger passenger : passengers) {
-            if (passenger.getSurvived()) {
-                Integer count = passengerCountBySurvival.get("survived");
-                if (count == null) {
-                    count = 0;
-                }
-                passengerCountBySurvival.put("survived", count + 1);
-            } else {
-                Integer count = passengerCountBySurvival.get("not-survived");
-                if (count == null) {
-                    count = 0;
-                }
-                passengerCountBySurvival.put("not-survived", count + 1);
-            }
+        Map<String, Integer> passengerCountBySurvival = PassengersDataService.getPassengerCountBySurvival(passengers);
+
+        double[][] matirx = new double[passengers.size()][5];
+
+        for (int i = 0; i < passengers.size(); i++){
+            Passenger passenger = passengers.get(i);
+            double[] passengerVector = new double[5];
+            passengerVector[0] = Double.parseDouble(passenger.getPassengerId());
+            passengerVector[1] = passenger.getSurvived() ? 1:0;
+            passengerVector[2] = Double.parseDouble(passenger.getPclass());
+            passengerVector[3] = passenger.getGender().equals("male") ? 0:1;
+            passengerVector[4] = passenger.getAge();
+            matirx[i] = passengerVector;
         }
-        System.out.println(passengerCountBySurvival);
+
+        System.out.println(Arrays.deepToString(matirx));
     }
+
 }
