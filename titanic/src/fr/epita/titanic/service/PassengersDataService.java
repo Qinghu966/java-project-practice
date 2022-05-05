@@ -4,6 +4,8 @@ import fr.epita.titanic.datamodel.Passenger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 public class PassengersDataService {
@@ -85,6 +87,31 @@ public class PassengersDataService {
                 passengers.add(passenger);
             }
         }
+        scanner.close();
         return passengers;
+    }
+
+    public static void writeAsCsv(List<Passenger> passengers, String filePath) {
+        File file = new File(filePath);
+        try{
+            file.createNewFile();
+            PrintWriter printWriter = new PrintWriter(file);
+            String header = "passengerId, gender, pclass, survived, age";
+            printWriter.println(header);
+            for(Passenger passenger : passengers){
+                String csv = "";
+                csv += passenger.getPassengerId() + ",";
+                csv += passenger.getGender() + ",";
+                csv += passenger.getPclass() + ",";
+                csv += passenger.getSurvived() + ",";
+                csv += passenger.getAge() + ",";
+
+                printWriter.println(csv);
+            }
+            printWriter.flush();
+            printWriter.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 }
